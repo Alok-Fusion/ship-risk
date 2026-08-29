@@ -56,4 +56,4 @@ jobs:
 
       - name: Run ship-risk Readiness Check
         run: |
-          node bin/ship-risk.js scan src --min-score=70
+          node bin/ship-risk.js scan --min-score=70
