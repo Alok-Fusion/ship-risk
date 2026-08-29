@@ -3,8 +3,10 @@
  * @type {import('./src/types').ShipRiskConfig}
  */
 module.exports = {
-  // Only ignore test fixtures (which contain intentionally vulnerable code)
+  // Ignore tests and test fixtures during repository scans
   ignore: [
+    'test/**',
+    '**/*.fixture.*',
     '**/fixtures/**',
     'dist/**',
     'coverage/**',
