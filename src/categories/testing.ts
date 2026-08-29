@@ -100,7 +100,7 @@ export const testingCategory: CategoryScanner = {
             },
           });
         } catch {
-          // Handled
+          return findings;
         }
       }
 

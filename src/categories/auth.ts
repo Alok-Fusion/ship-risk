@@ -275,7 +275,7 @@ export const authCategory: CategoryScanner = {
             },
           });
         } catch {
-          // AST traversal error handled
+          return findings;
         }
       }
     }

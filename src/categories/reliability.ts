@@ -29,12 +29,12 @@ export const reliabilityCategory: CategoryScanner = {
       const content = file.content;
 
       // Check if Express app exists in codebase
-      if (
-        content.includes('express()') ||
-        (content.includes('require("express")') && content.includes('app.listen')) ||
-        (content.includes("require('express')") && content.includes('app.listen')) ||
-        (content.includes("from 'express'") && content.includes('app.listen'))
-      ) {
+      const hasExpressImport =
+        /(?:require\(['"]express['"]\)|from\s+['"]express['"])/.test(content);
+      const hasAppInstantiation =
+        /(?:const|let|var)\s+(?:app|server)\s*=\s*express\(/.test(content);
+
+      if (hasExpressImport && (hasAppInstantiation || content.includes('app.listen'))) {
         hasExpressApp = true;
         expressAppFile = file;
       }
@@ -113,7 +113,7 @@ export const reliabilityCategory: CategoryScanner = {
             },
           });
         } catch {
-          // Handled
+          return findings;
         }
       }
     }

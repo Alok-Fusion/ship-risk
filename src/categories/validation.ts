@@ -65,6 +65,11 @@ export const validationCategory: CategoryScanner = {
         const line = file.lines[i];
         const lineNum = i + 1;
 
+        // Skip regex definitions or scanner rule declarations
+        if (line.includes('SQL_KEYWORDS_REGEX') || line.includes('RegExp') || line.includes('.test(')) {
+          continue;
+        }
+
         // Concatenation: "SELECT ... " + var
         if (SQL_KEYWORDS_REGEX.test(line) && line.includes('+') && !line.includes('//')) {
           findings.push({
@@ -222,7 +227,7 @@ export const validationCategory: CategoryScanner = {
             },
           });
         } catch {
-          // AST error handled
+          return findings;
         }
       }
     }

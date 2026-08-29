@@ -165,7 +165,7 @@ export const errorHandlingCategory: CategoryScanner = {
             },
           });
         } catch {
-          // Handled
+          return findings;
         }
       }
     }

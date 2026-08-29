@@ -14,7 +14,7 @@ export function createCli(): Command {
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
     version = pkg.version;
   } catch {
-    // fallback
+    version = '1.0.0';
   }
 
   program

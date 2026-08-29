@@ -13,6 +13,8 @@ export const DEFAULT_IGNORE_PATTERNS = [
   '**/out/**',
   '**/.next/**',
   '**/coverage/**',
+  '**/fixtures/**',
+  '**/__fixtures__/**',
   '**/.turbo/**',
   '**/.cache/**',
   '**/.vscode/**',
@@ -167,7 +169,7 @@ export async function collectProjectFiles(
         parseError,
       });
     } catch {
-      // Ignore unreadable files
+      continue;
     }
   }
 

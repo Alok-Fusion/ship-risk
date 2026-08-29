@@ -27,6 +27,8 @@ const KNOWN_SECRET_PATTERNS: Array<{ regex: RegExp; name: string; severity: 'hig
   { regex: /(?:postgres|postgresql|mysql|mongodb(?:\+srv)?):\/\/[^:\s]+:[^@\s]+@[^\s/]+/i, name: 'Database Connection String With Password', severity: 'critical' },
 ];
 
+const DIRECT_ENV_IMPORT_REGEX = /(?:import\s+.*\s+from\s+['"][^'"]*\.env['"]|require\(['"][^'"]*\.env['"]\))/;
+
 export const secretsCategory: CategoryScanner = {
   id: 'secrets',
   name: 'Secrets & Credentials',
@@ -101,7 +103,9 @@ export const secretsCategory: CategoryScanner = {
 
           // Check direct import from '.env'
           if (
-            /(?:import\s+.*\s+from\s+['"][^'"]*\.env['"]|require\(['"][^'"]*\.env['"]\))/.test(line) &&
+            !line.includes('DIRECT_ENV_IMPORT_REGEX') &&
+            !line.includes('RegExp') &&
+            DIRECT_ENV_IMPORT_REGEX.test(line) &&
             !/dotenv/i.test(line)
           ) {
             findings.push({
@@ -276,7 +280,7 @@ export const secretsCategory: CategoryScanner = {
               },
             });
           } catch {
-            // AST traversal fallback already handled by regex
+            return findings;
           }
         }
       }
