@@ -3,10 +3,9 @@
  * @type {import('./src/types').ShipRiskConfig}
  */
 module.exports = {
-  // Ignore fixtures and tests when scanning the ship-risk codebase itself
+  // Only ignore test fixtures (which contain intentionally vulnerable code)
   ignore: [
     '**/fixtures/**',
-    'test/**',
     'dist/**',
     'coverage/**',
   ],

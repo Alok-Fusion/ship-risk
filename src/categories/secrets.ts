@@ -101,6 +101,12 @@ export const secretsCategory: CategoryScanner = {
           const line = file.lines[i];
           const lineNum = i + 1;
 
+          // Skip comment lines
+          const trimmed = line.trim();
+          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) {
+            continue;
+          }
+
           // Check direct import from '.env'
           if (
             !line.includes('DIRECT_ENV_IMPORT_REGEX') &&

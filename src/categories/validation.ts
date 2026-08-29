@@ -27,7 +27,7 @@ const VALIDATION_METHODS = [
   'z.object',
 ];
 
-const SQL_KEYWORDS_REGEX = /\b(SELECT|INSERT\s+INTO|UPDATE|DELETE\s+FROM|DROP\s+TABLE|ALTER\s+TABLE|WHERE|FROM)\b/i;
+const SQL_QUERY_CONCAT_REGEX = /['"`]\s*(?:SELECT|INSERT\s+INTO|UPDATE|DELETE\s+FROM|DROP\s+TABLE|ALTER\s+TABLE)\b/i;
 
 const DANGEROUS_CALLS = ['eval', 'exec', 'execsync', 'spawnsync'];
 
@@ -65,13 +65,21 @@ export const validationCategory: CategoryScanner = {
         const line = file.lines[i];
         const lineNum = i + 1;
 
-        // Skip regex definitions or scanner rule declarations
-        if (line.includes('SQL_KEYWORDS_REGEX') || line.includes('RegExp') || line.includes('.test(')) {
+        // Skip import/export statements, comments, or regex definitions
+        if (
+          line.trim().startsWith('//') ||
+          line.trim().startsWith('import ') ||
+          line.trim().startsWith('export ') ||
+          line.includes('SQL_QUERY_CONCAT_REGEX') ||
+          line.includes('RegExp') ||
+          line.includes('.test(') ||
+          /^\s*const\s+[A-Z_]+\s*=\s*\//.test(line)
+        ) {
           continue;
         }
 
         // Concatenation: "SELECT ... " + var
-        if (SQL_KEYWORDS_REGEX.test(line) && line.includes('+') && !line.includes('//')) {
+        if (SQL_QUERY_CONCAT_REGEX.test(line) && line.includes('+')) {
           findings.push({
             file: file.relativeFilePath,
             line: lineNum,
@@ -94,8 +102,11 @@ export const validationCategory: CategoryScanner = {
               if (pathRef.node.expressions.length > 0) {
                 const line = pathRef.node.loc?.start.line ?? 1;
                 const rawText = file.lines[line - 1] || '';
-                if (SQL_KEYWORDS_REGEX.test(rawText)) {
-                  // Check deduplication
+                if (
+                  /\b(SELECT|INSERT\s+INTO|UPDATE|DELETE\s+FROM|DROP\s+TABLE)\b/i.test(rawText) &&
+                  !rawText.includes('.test(') &&
+                  !rawText.includes('RegExp')
+                ) {
                   const exists = findings.some(
                     (f) => f.file === file.relativeFilePath && f.line === line && f.rule === ruleSql.id
                   );
