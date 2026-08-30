@@ -1,6 +1,6 @@
 # ship-risk
 
-> **AI-Code Readiness Scanner** — Spot the exact gap between "AI says it's done" and production-ready code with NIRNAY-style explainable risk scoring.
+> **AI-Code Readiness Scanner** — flags what a human reviewer would catch before AI-generated code ships (secrets, missing auth, weak validation, no tests) with explainable, weighted scoring.
 
 [![npm version](https://img.shields.io/npm/v/ship-risk.svg)](https://www.npmjs.com/package/ship-risk)
 [![license](https://img.shields.io/npm/l/ship-risk.svg)](./LICENSE)
